@@ -55,7 +55,7 @@ namespace WebApplication7.Models
         };
 
             context.Candidates.AddRange(candidates);
-            context.SaveChanges();
+            context.SaveChanges(); 
         }
 
 
