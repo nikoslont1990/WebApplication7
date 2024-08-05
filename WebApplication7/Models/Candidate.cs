@@ -27,7 +27,7 @@ using System.ComponentModel.DataAnnotations.Schema;
         public IEnumerable<Degree> CandidateDegrees { get; set; } = new List<Degree>();
 
         [DataType(DataType.Upload)]
-        public byte[] CV { get; set; }
+        public string CV { get; set; }
 
         [Required]
         public DateTime CreationTime { get; set; } = DateTime.Now;

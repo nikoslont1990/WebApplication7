@@ -12,8 +12,8 @@ using WebApplication7.Models;
 namespace WebApplication7.Migrations
 {
     [DbContext(typeof(WebAppDBContext))]
-    [Migration("20240805001842_NewMigration")]
-    partial class NewMigration
+    [Migration("20240805144435_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,9 @@ namespace WebApplication7.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CandidateId"));
 
-                    b.Property<byte[]>("CV")
+                    b.Property<string>("CV")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");

@@ -21,7 +21,7 @@ namespace WebApplication7.Models.Repository
 
         public async Task<IEnumerable<Candidate>> GetAll()
         {
-            return await _dbContext.Candidates.OrderBy(x=>x.FirstName).ToListAsync();
+            return await _dbContext.Candidates.OrderBy(x=>x.CandidateId).ToListAsync();
         }
 
         public async Task<Candidate?> GetCandidateById(int id)

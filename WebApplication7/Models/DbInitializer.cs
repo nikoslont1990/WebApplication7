@@ -35,7 +35,7 @@ namespace WebApplication7.Models
                     new Degree { Name = "B.Sc. Computer Science",CreationTime=DateTime.Now },
                     new Degree { Name = "M.Sc. Computer Science",CreationTime=DateTime.Now }
                 },
-                CV = new byte[]{0},
+                CV ="PDF" ,
                 CreationTime = DateTime.Now
             },
             new Candidate
@@ -49,7 +49,7 @@ namespace WebApplication7.Models
                     new Degree { Name = "B.A. English",CreationTime=DateTime.Now },
                     new Degree { Name = "M.A. English" , CreationTime = DateTime.Now}
                 },
-                CV = new byte[]{1},
+                CV ="Word",
                 CreationTime = DateTime.Now
             }
         };

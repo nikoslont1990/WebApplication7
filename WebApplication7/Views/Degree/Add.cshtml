@@ -1,0 +1,31 @@
+﻿@model WebApplication7.Models.Degree
+
+@{
+    ViewData["Title"] = "Add Degree";
+}
+
+<h1>Add Degree</h1>
+
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DegreeId"></label>
+        <input asp-for="DegreeId" class="form-control" />
+        <span asp-validation-for="DegreeId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Degree</button>
+</form>
+<div>
+    <a asp-controller="Degree" asp-action="Index">Back to overview</a>
+</div>
+
+@* @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+ *@

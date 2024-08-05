@@ -34,12 +34,12 @@ namespace WebApplication7.Models.Repository
             return await _dbContext.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Degree>> GetAll()
+        public IEnumerable<Degree> GetAll()
         {
-            throw new NotImplementedException();
+            return _dbContext.Degrees.ToList();
         }
 
-        public Task<Candidate?> GetDegreeById(int candidateId)
+        public Task<Degree?> GetDegreeById(int candidateId)
         {
             throw new NotImplementedException();
         }

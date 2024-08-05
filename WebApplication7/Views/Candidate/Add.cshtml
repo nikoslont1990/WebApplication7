@@ -28,15 +28,62 @@
         <span asp-validation-for="Mobile" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CandidateDegrees"></label>
-        <select asp-for="CandidateDegrees" asp-items="ViewBag.DegreeList" class="form-control"></select>
+        <label asp-for="CV">CV Type</label>
+        <select asp-for="CV" class="form-control">
+            <option value="pdf">PDF</option>
+            <option value="word">Word</option>
+            <option value="excel">Excel</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="CandidateDegrees">Degrees</label>
+        <div id="degreesContainer">
+            <select id="degreeDropdown" class="form-control degree-dropdown">
+                @* <option value="">Select Degree</option> *@
+                 @foreach (var degree in ViewBag.DegreeList)
+                {
+                    <option value="@degree.Name">@degree.Name</option>
+                }
+            </select>
+        </div> 
+    @* <div class="form-group">
+        <label>Degrees</label>
+        <div id="degreesContainer">
+           
+            <select name="CandidateDegrees" asp-items="ViewBag.DegreeList.Items" class="form-control degree-dropdown">
+                <option value="">Select Degree</option>
+            </select>
+        </div>
+        <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button>
+    </div> *@
+
+
+        <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button>
     </div>
     <button type="submit" class="btn btn-primary">Add Candidate</button>
 </form>
+<div>
+    <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
+</div>
 
-@* @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
+<script>
+    $(document).ready(function () {
+        var degreeList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.DegreeList));
+
+        // Populate the dropdown
+        var $dropdown = $('#degreeDropdown');
+        $.each(degreeList, function (index, degree) {
+            $dropdown.append($('<option>', {
+                value: degree.DegreeId,
+                text: degree.DegreeName
+            }));
+        });
+
+        // Close the dropdown when an option is selected
+        $dropdown.on('change', function () {
+            $(this).blur();
+        });
+    });
+</script>
 }
- *@
