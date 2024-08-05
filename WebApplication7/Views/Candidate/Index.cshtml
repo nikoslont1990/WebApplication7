@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Candidate>
+<h2>Candidates</h2>
+<hr />
+
+@if (TempData["PieDeleted"] != null)
+{
+    <p class="text-success">@TempData["PieDeleted"]</p>
+}
+
+
+@if (!Model.Any())
+{
+    <tr><td colspan="3" class="text-center">No pies at this point</td></tr>
+}
+else
+{
+    <table class="table table-condensed table-bordered">
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>Actions</th>
+        </tr>
+        @foreach (var candidate in Model)
+        {
+
+            <tr>
+                <td>@candidate.CandidateId</td>
+                <t>@candidate.FirstName</t>
+                <td>@candidate.LastName</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@candidate.CandidateId">Details</a>
+                    <a asp-action="Edit" asp-route-id="@candidate.CandidateId">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@candidate.CandidateId">Delete</a>
+
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<p>
+    <a class="btn btn-primary" asp-action="Add">Add new candidate</a>
+</p>
