@@ -58,7 +58,7 @@
     </div> *@
 
 
-        <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button>
+       @*  <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button> *@
     </div>
     <button type="submit" class="btn btn-primary">Add Candidate</button>
 </form>
@@ -85,5 +85,39 @@
             $(this).blur();
         });
     });
+
+
+
+
+    $('#addDegreeButton').click(function () {
+        
+        var degreeName = $('#newDegreeName').val().trim();
+        if (degreeName) {
+            $.ajax({
+                url: '@Url.Action("Add", "Degrees")',
+                type: 'POST',
+                data: { degreeName: degreeName },
+                success: function (response) {
+                    if (response.success) {
+                        degrees.push({ Value: response.degreeId, Text: response.degreeName });
+                        var newDropdown = $('<select name="Degrees[' + degreeCounter + ']" class="form-control degree-dropdown"><option value="">Select Degree</option></select>');
+                        populateDegreesDropdown(newDropdown);
+                        $('#degreesContainer').append(newDropdown);
+                        degreeCounter++;
+                        refreshDropdowns();
+                        $('#newDegreeName').val(''); // Clear the input field
+                    } else {
+                        alert('Failed to add degree.');
+                    }
+                },
+                error: function () {
+                    alert('Error while adding degree.');
+                }
+            });
+        } else {
+            alert('Please enter a degree name.');
+        }
+    });
+
 </script>
 }

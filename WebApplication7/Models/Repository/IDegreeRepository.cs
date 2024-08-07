@@ -3,7 +3,7 @@
     public interface IDegreeRepository
     {
 
-        IEnumerable<Degree> GetAll();
+        Task<IEnumerable<Degree>> GetAll();
         Task<Degree?> GetDegreeById(int candidateId);
 
         Task<int> Add(Degree degree);

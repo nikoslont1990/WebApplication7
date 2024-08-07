@@ -65,7 +65,7 @@ namespace WebApplication7.Controllers
 
                     await _degreeRepository.Add(degree1);
 
-                    ViewBag.DegreeList = new SelectList(_degreeRepository.GetAll(), "DegreeId", "DegreeName");
+                    ViewBag.DegreeList = new SelectList(await _degreeRepository.GetAll(), "DegreeId", "DegreeName");
                     return RedirectToAction(nameof(Index));
                 }
             }

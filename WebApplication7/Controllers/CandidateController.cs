@@ -55,7 +55,7 @@ namespace WebApplication7.Controllers
             //IEnumerable<SelectListItem> selectListItems = new SelectList(allDegrees, "DegreeId", "Name", "CreationTime");
 
             //CandidateAddViewModel candidateViewModel = new CandidateAddViewModel() {Degrees= selectListItems };
-            var degrees =  _degreeRepository.GetAll();
+            var degrees =  await _degreeRepository.GetAll();
             ViewBag.DegreeList = degrees.ToList();
             //.Select(d => new { Value = d.De, Text = d.Text })
             //.ToList(); 
@@ -90,9 +90,8 @@ namespace WebApplication7.Controllers
                             candidate.CandidateDegrees.ToList().Add(degree);
                         }
                     }
-                    await _candidateRepository.Add(candidate);
-                 
-                    
+               
+
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -106,11 +105,10 @@ namespace WebApplication7.Controllers
             //IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
 
             //pieAddViewModel.Categories = selectListItems;
-            ViewBag.DegreeList = _degreeRepository.GetAll()
-             .Select(d => new { Value = d.DegreeId, Text = d.Name });
+       
              
 
-            return View(candidate);
+            
         }
 
     }

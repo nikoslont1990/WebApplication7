@@ -34,9 +34,9 @@ namespace WebApplication7.Models.Repository
             return await _dbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<Degree> GetAll()
+        public async Task<IEnumerable<Degree>> GetAll()
         {
-            return _dbContext.Degrees.ToList();
+            return await _dbContext.Degrees.ToListAsync();
         }
 
         public Task<Degree?> GetDegreeById(int candidateId)
