@@ -17,9 +17,9 @@ namespace WebApplication7.Controllers
 
 
         [HttpGet]
-        public  IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var degrees = _degreeRepository.GetAll();
+            var degrees =await _degreeRepository.GetAll();
             return View(degrees);
         }
 

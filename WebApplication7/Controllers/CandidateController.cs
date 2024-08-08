@@ -100,14 +100,14 @@ namespace WebApplication7.Controllers
                 ModelState.AddModelError("", $"Adding the pie failed, please try again! Error: {ex.Message}");
             }
 
-            //var allCategories = await _categoryRepository.GetAllCategoriesAsync();
+            //var degrees = await _degreeRepository.GetAll();
 
             //IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
 
             //pieAddViewModel.Categories = selectListItems;
-       
-             
 
+
+            return View(candidate);
             
         }
 
