@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.IO.Pipelines;
 using WebApplication7.Models;
 using WebApplication7.Models.Repository;
+using WebApplication7.ViewModels;
 
 
 namespace WebApplication7.Controllers
@@ -27,44 +28,41 @@ namespace WebApplication7.Controllers
            return View(candidates);    
         }
 
-
-        public async Task<IActionResult> Details(int id)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            var candidate = await _candidateRepository.GetCandidateById(id);
-            return View(candidate);
+            var candidates = await _candidateRepository.GetAll();
+            return Json(candidates);
         }
 
+        #region Delete
+        public async Task<IActionResult> Delete(int id)
+        {
+            var candidate = await _candidateRepository.GetCandidateById(id);
+            await _candidateRepository.Delete(candidate.CandidateId);
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Add
         public async Task<IActionResult> Add()
         {
-            //    try
-            //    {
-            //        IEnumerable<Category>? allCategories = await _categoryRepository.GetAllCategoriesAsync();
-            //        IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
+            
+            var degrees = await _degreeRepository.GetAll();
+            var viewModel = new CandidateViewModel
+            {
+                AllDegrees = degrees.ToList() // Populate with all degrees from the database
+                
+            };
 
-            //        PieAddViewModel pieAddViewModel = new() { Categories = selectListItems };
-            //        return View(pieAddViewModel);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ViewData["ErrorMessage"] = $"There was an error: {ex.Message}";
-            //    }
-            //ViewBag.DegreeList = _degreeRepository.GetAll()
-            //.Select(d => new { Value = d.DegreeId, Text = d.Name });
-
-            //IEnumerable<Degree>? allDegrees = _degreeRepository.GetAll();
-            //IEnumerable<SelectListItem> selectListItems = new SelectList(allDegrees, "DegreeId", "Name", "CreationTime");
-
-            //CandidateAddViewModel candidateViewModel = new CandidateAddViewModel() {Degrees= selectListItems };
-            var degrees =  await _degreeRepository.GetAll();
-            ViewBag.DegreeList = degrees.ToList();
-            //.Select(d => new { Value = d.De, Text = d.Text })
-            //.ToList(); 
-            return View();
+        
+            return View(viewModel);
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(Candidate candidate,string CV)
+        public async Task<IActionResult> Add([FromBody]Candidate candidate)
          {
             try
             {
@@ -76,40 +74,74 @@ namespace WebApplication7.Controllers
                         LastName = candidate.LastName,
                         Email = candidate.Email,
                         Mobile = candidate.Mobile,
-                        CV = CV,
+                        CV = candidate.CV,
                         CreationTime = candidate.CreationTime,
-
                         CandidateDegrees = candidate.CandidateDegrees
+
+                        //CandidateDegrees = candidate.AllDegrees.Where(x => model.SelectedDegrees.Contains(x.DegreeId)).ToList()
                     };
-                    
-                        foreach (var degreeId in cand.CandidateDegrees)
-                         {
-                        var degree = await _degreeRepository.GetDegreeById(degreeId.DegreeId);
-                        if (degree != null)
-                        {
-                            candidate.CandidateDegrees.ToList().Add(degree);
-                        }
-                    }
-               
+
+
+
+
+
+                    await _candidateRepository.Add(cand);
 
                     return RedirectToAction(nameof(Index));
                 }
             }
+ 
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Adding the pie failed, please try again! Error: {ex.Message}");
             }
 
-            //var degrees = await _degreeRepository.GetAll();
-
-            //IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
-
-            //pieAddViewModel.Categories = selectListItems;
-
-
+            var degrees= await _degreeRepository.GetAll();
+            //model.AllDegrees= degrees.ToList();
             return View(candidate);
             
         }
+
+        #endregion
+
+        #region Update
+        public async Task<IActionResult> Edit(int? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var candidate = await _candidateRepository.GetCandidateById(id.Value);
+            return View(candidate);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Candidate newcandididate)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _candidateRepository.UpdateCandidateAsync(newcandididate);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Updating the category failed, please try again! Error: {ex.Message}");
+            }
+
+            return View(newcandididate);
+        }
+        #endregion
+
 
     }
 }

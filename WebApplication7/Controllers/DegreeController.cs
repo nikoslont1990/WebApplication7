@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApplication7.Models.Repository;
 using WebApplication7.Models;
+using WebApplication7.ViewModels;
 
 namespace WebApplication7.Controllers
 {
@@ -11,7 +12,7 @@ namespace WebApplication7.Controllers
 
         public DegreeController(IDegreeRepository degreeRepository)
         {
-          
+
             _degreeRepository = degreeRepository;
         }
 
@@ -19,33 +20,98 @@ namespace WebApplication7.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var degrees =await _degreeRepository.GetAll();
-            return View(degrees);
+            DegreeListViewModel model = new()
+            {
+                Degrees = (await _degreeRepository.GetAll()).ToList()
+            };
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            DegreeListViewModel model = new()
+            {
+                Degrees = (await _degreeRepository.GetAll()).ToList()
+            };
+            return Json(model);
         }
 
 
-        public async Task<IActionResult> Details(int id)
+
+
+        public async Task<IActionResult> Delete(int id)
         {
-            var candidate = await _degreeRepository.GetDegreeById(id);
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var candidate = await _degreeRepository.GetDegreeByIdAsync(id);
             return View(candidate);
         }
 
-        public async Task<IActionResult> Add()
+        [HttpPost]
+        public async Task<IActionResult> Delete(Degree degree)
         {
-            //    try
-            //    {
-            //        IEnumerable<Category>? allCategories = await _categoryRepository.GetAllCategoriesAsync();
-            //        IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
+            try
+            {
+                
+                    await _degreeRepository.DeleteCategoryAsync(degree);
+                    return RedirectToAction(nameof(Index));
+              
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Deleting the degree failed, please try again! Error: {ex.Message}");
+            }
 
-            //        PieAddViewModel pieAddViewModel = new() { Categories = selectListItems };
-            //        return View(pieAddViewModel);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ViewData["ErrorMessage"] = $"There was an error: {ex.Message}";
-            //    }
+            return View(degree);
+        }
+
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var degree = await _degreeRepository.GetDegreeByIdAsync(id.Value);
+            return View(degree);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Degree degree)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _degreeRepository.UpdateCategoryAsync(degree);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Updating the degree failed, please try again! Error: {ex.Message}");
+            }
+
+            return View(degree);
+        }
+
+
+
+        public IActionResult Add()
+        {
             return View();
-
         }
 
         [HttpPost]
@@ -55,32 +121,22 @@ namespace WebApplication7.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Degree degree1 = new()
-                    {
-                        DegreeId = degree.DegreeId,
-                        Name = degree.Name,
-                        CreationTime = degree.CreationTime,
 
-                    };
+                    await _degreeRepository.Add(degree);
 
-                    await _degreeRepository.Add(degree1);
-
-                    ViewBag.DegreeList = new SelectList(await _degreeRepository.GetAll(), "DegreeId", "DegreeName");
                     return RedirectToAction(nameof(Index));
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Adding the pie failed, please try again! Error: {ex.Message}");
+                ModelState.AddModelError("", $"Adding the degree failed, please try again! Error: {ex.Message}");
             }
 
-            //var allCategories = await _categoryRepository.GetAllCategoriesAsync();
-
-            //IEnumerable<SelectListItem> selectListItems = new SelectList(allCategories, "CategoryId", "Name", null);
-
-            //pieAddViewModel.Categories = selectListItems;
+     
 
             return View(degree);
         }
     }
 }
+    
+

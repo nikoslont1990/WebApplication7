@@ -4,13 +4,15 @@
     {
 
         Task<IEnumerable<Degree>> GetAll();
-        Task<Degree?> GetDegreeById(int candidateId);
+        Task<Degree?> GetDegreeByIdAsync(int DegreeId);
 
         Task<int> Add(Degree degree);
-        Task<int> Update(Degree degree);
-        Task<int> Delete(int id);
+        //Task<int> Update(Degree degree);
+        Task<int> DeleteCategoryAsync(Degree degree);
 
-        Task<int> DeleteUnusedDegrees();
+        Task<int> DeleteUnusedDegrees(); 
+        
+        Task<int>UpdateCategoryAsync(Degree degree);
 
         Task<int> Search(Degree degree);
     }

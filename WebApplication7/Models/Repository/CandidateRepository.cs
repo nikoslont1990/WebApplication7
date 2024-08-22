@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApplication7.ViewModels;
 
 namespace WebApplication7.Models.Repository
 {
@@ -15,7 +16,19 @@ namespace WebApplication7.Models.Repository
 
         public async Task<int> Add(Candidate candidate)
         {
-           _dbContext.Candidates.AddAsync(candidate);
+
+            bool candidateWithSameNameExist = await _dbContext.Candidates.AnyAsync(c => c.FirstName == candidate.FirstName && c.LastName==candidate.LastName);
+
+            if (candidateWithSameNameExist)
+            {
+                throw new Exception("A Degree with the same name already exists");
+            }
+
+            _dbContext.Candidates.Add(candidate);
+
+
+
+            //_dbContext.Candidates.AddAsync(candidate);
             return await _dbContext.SaveChangesAsync();
         }
 
@@ -68,6 +81,31 @@ namespace WebApplication7.Models.Repository
             else
             {
                 throw new ArgumentException($"The pie to delete can't be found.");
+            }
+        }
+
+        public async Task<int> UpdateCandidateAsync(Candidate candidate)
+        {
+            bool existWithSameNameCandidate = _dbContext.Candidates.Any(x => x.FirstName == candidate.FirstName && x.LastName == candidate.LastName);
+            if (existWithSameNameCandidate)
+            {
+                throw new Exception("A canidate with the same name already exists");
+
+            }
+
+            var candidateToUpdate = _dbContext.Candidates.FirstOrDefault(x => x.CandidateId == candidate.CandidateId);
+            if (candidateToUpdate != null)
+            {
+                candidateToUpdate.FirstName = candidate.FirstName;
+                candidateToUpdate.LastName = candidate.LastName;
+                candidateToUpdate.CandidateId = candidate.CandidateId;
+
+                _dbContext.Candidates.Update(candidateToUpdate);
+                return await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ArgumentException($"The candidate to update can't be found");
             }
         }
     }

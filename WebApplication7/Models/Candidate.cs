@@ -24,7 +24,17 @@ using System.ComponentModel.DataAnnotations.Schema;
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be 10 digits")]
         public string Mobile { get; set; }
 
-        public IEnumerable<Degree> CandidateDegrees { get; set; } = new List<Degree>();
+
+        //[Display(Name = "Degree ID")]
+        //public int DegreeID { get; set; }
+
+        //[Display(Name = "Degree")]
+        //public Degree? Degree { get; set; }
+
+        [Display(Name = "Degrees")]
+        public List<Degree> CandidateDegrees { get; set; }
+        
+        /*public IEnumerable<Degree> CandidateDegrees { get; set; } x;*/
 
         [DataType(DataType.Upload)]
         public string CV { get; set; }

@@ -1,123 +1,134 @@
-﻿@model WebApplication7.Models.Candidate
+﻿@model CandidateViewModel
 
-@{
-    ViewData["Title"] = "Add Candidate";
-}
+<body>
+    @{
+        ViewData["Title"] = "Add Candidate";
+    }
 
-<h1>Add Candidate</h1>
+    <h1>Add Candidate</h1>
 
-<form asp-action="Add" method="post">
-    <div class="form-group">
-        <label asp-for="FirstName"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="LastName"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Mobile"></label>
-        <input asp-for="Mobile" class="form-control" />
-        <span asp-validation-for="Mobile" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CV">CV Type</label>
-        <select asp-for="CV" class="form-control">
-            <option value="pdf">PDF</option>
-            <option value="word">Word</option>
-            <option value="excel">Excel</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label asp-for="CandidateDegrees">Degrees</label>
-        <div id="degreesContainer">
-            <select id="degreeDropdown" class="form-control degree-dropdown">
-                @* <option value="">Select Degree</option> *@
-                 @foreach (var degree in ViewBag.DegreeList)
-                {
-                    <option value="@degree.Name">@degree.Name</option>
-                }
-            </select>
-        </div> 
-    @* <div class="form-group">
-        <label>Degrees</label>
-        <div id="degreesContainer">
-           
-            <select name="CandidateDegrees" asp-items="ViewBag.DegreeList.Items" class="form-control degree-dropdown">
-                <option value="">Select Degree</option>
-            </select>
+    <form id="candidateForm">
+        <div class="form-group">
+            <label for="Candidate.FirstName">FirstName</label>
+            <input type="text" id="candidateName" name="Candidate.FirstName" />
+            <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
         </div>
-        <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button>
-    </div> *@
+        <div class="form-group">
+            <label for="Candidate.LastName">LastName</label>
+            <input type="text" id="candidateLastName" name="Candidate.LastName" class="form-control" />
+            <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Candidate.Email">Email</label>
+            <input type="text" id="candidateEmail" name="Candidate.Email" class="form-control" />
+            <span asp-validation-for="Candidate.Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Candidate.Mobile">Mobile</label>
+            <input type="text" id="CandidateMobile" name="Candidate.Mobile" class="form-control" />
+            <span asp-validation-for="Candidate.Mobile" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Candidate.CV">CV Type</label>
+            <select id="CandidateCV" name="CVS" class="form-control">
+                <option value="pdf">PDF</option>
+                <option value="word">Word</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <input type="hidden" id="AllDegreesJson" name="AllDegrees" value="@Html.Raw(Json.Serialize(Model.AllDegrees))" />
+            <input type="hidden" asp-for="Candidate.CandidateDegrees" name="Candidate.CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.SelectedDegrees))" />
+         
+            <div class="form-group">
+                <label for="degrees">Select Degrees:</label>
+                <select id="degrees" name="SelectedDegrees" class="form-control" multiple="multiple">
+                    @foreach (var degree in Model.AllDegrees)
+                    {
+                        <option value="@degree.DegreeId">
+                            @degree.Name
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
 
 
-       @*  <button type="button" id="addDegreeButton" class="btn btn-secondary">Add Another Degree</button> *@
+        <button type="submit" class="btn btn-primary">Add Candidate</button>
+    </form>
+    <div>
+        <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
     </div>
-    <button type="submit" class="btn btn-primary">Add Candidate</button>
-</form>
-<div>
-    <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
-</div>
 
-
+@section Scripts {
 <script>
-    $(document).ready(function () {
-        var degreeList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.DegreeList));
 
-        // Populate the dropdown
-        var $dropdown = $('#degreeDropdown');
-        $.each(degreeList, function (index, degree) {
-            $dropdown.append($('<option>', {
-                value: degree.DegreeId,
-                text: degree.DegreeName
-            }));
-        });
-
-        // Close the dropdown when an option is selected
-        $dropdown.on('change', function () {
-            $(this).blur();
-        });
-    });
-
-
-
-
-    $('#addDegreeButton').click(function () {
-        
-        var degreeName = $('#newDegreeName').val().trim();
-        if (degreeName) {
+    var allDegrees = [];
+        // Fetch AllDegrees using AJAX on page load
+        $(document).ready(function () {
             $.ajax({
-                url: '@Url.Action("Add", "Degrees")',
-                type: 'POST',
-                data: { degreeName: degreeName },
+                url: '@Url.Action("GetAll", "Degree")',  // URL to the GetAllDegrees action
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    allDegrees = data;
+                    // var dropdown = $('#AllDegreesJson');
+                    /* dropdown.empty();  */// Clear the dropdown
+                    $.each(data, function (index, degree) {
+                        // dropdown.append('<option value="' + degree.id + '">' + degree.name + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('Failed to load degrees.');
+                }
+            });
+        });
+
+        // Handle form submission via AJAX
+        $('#candidateForm').on('submit', function (e) {
+            //e.preventDefault();
+            var selectedValues=$('#degrees').val();
+            var degrees = selectedValues.map(function(value) {
+                    return {
+                     DegreeId: value,
+                     Name: "", // You can set it to an empty string or populate it as needed
+                     CreationTime: new Date().toISOString() // Set the current date/time as the creation time
+              };
+             });
+            var candidateData = {
+                
+                    //CandidateId:1,
+                    FirstName: $('#candidateName').val(),
+                    LastName:$('#candidateLastName').val(),
+                    Email:$('#candidateEmail').val(),
+                    Mobile:$('#CandidateMobile').val(),
+                    CV:$('#CandidateCV').val(),
+                    CandidateDegrees:degrees,
+                    //CreationTime: new Date().toISOString()
+                  
+                
+    
+            };
+
+                   var model=JSON.stringify(candidateData);
+
+            $.ajax({
+                url: '@Url.Action("Add","Candidate")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: model,
                 success: function (response) {
+                    debugger;
                     if (response.success) {
-                        degrees.push({ Value: response.degreeId, Text: response.degreeName });
-                        var newDropdown = $('<select name="Degrees[' + degreeCounter + ']" class="form-control degree-dropdown"><option value="">Select Degree</option></select>');
-                        populateDegreesDropdown(newDropdown);
-                        $('#degreesContainer').append(newDropdown);
-                        degreeCounter++;
-                        refreshDropdowns();
-                        $('#newDegreeName').val(''); // Clear the input field
+                        $('#message').text(response.message);
                     } else {
-                        alert('Failed to add degree.');
+                        $('#message').text(response.message);
                     }
                 },
                 error: function () {
-                    alert('Error while adding degree.');
+                    $('#message').text('An error occurred while saving the candidate.');
                 }
             });
-        } else {
-            alert('Please enter a degree name.');
-        }
-    });
-
-</script>
-}
+        });
+    </script>
+ }
+ </body>

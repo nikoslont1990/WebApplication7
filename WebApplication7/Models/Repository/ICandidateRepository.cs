@@ -10,5 +10,7 @@ namespace WebApplication7.Models.Repository
         Task<int> Add(Candidate candidate);
         Task<int> Update(Candidate candidate);
         Task<int> Delete(int id);
+
+        Task<int> UpdateCandidateAsync(Candidate candidate);
     }
 }

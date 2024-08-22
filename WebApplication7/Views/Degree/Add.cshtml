@@ -7,15 +7,19 @@
 <h1>Add Degree</h1>
 
 <form asp-action="Add" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="DegreeId"></label>
-        <input asp-for="DegreeId" class="form-control" />
-        <span asp-validation-for="DegreeId" class="text-danger"></span>
+
+
+
+    <div class="mb-3">
+        <label asp-for="CreationTime" class="form-label"></label>
+        <input asp-for="CreationTime" class="form-control" />
+        <span asp-validation-for="CreationTime" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Add Degree</button>
 </form>

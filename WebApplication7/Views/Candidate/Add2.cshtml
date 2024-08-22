@@ -1,0 +1,220 @@
+﻿@model CandidateViewModel
+
+<body>
+@{
+    ViewData["Title"] = "Add Candidate";
+}
+
+<h1>Add Candidate</h1>
+
+<form id="candidateForm">
+   @*  <div asp-validation-summary="All" class="text-danger"></div> *@
+    <div class="form-group">
+        <label for="Candidate.FirstName">FirstName</label>
+        <input type="text" id="candidateName" name="Candidate.FirstName" />
+        <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Candidate.LastName">LastName</label>
+        <input type="text" id="candidateLastName" name="Candidate.LastName" class="form-control" />
+        <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
+     </div>
+     <div class="form-group">
+        <label for="Candidate.Email">Email</label>
+        <input type="text" id="candidateEmail" name="Candidate.Email" class="form-control" />
+        @* <label asp-for="Candidate.Email"></label>
+        <input asp-for="Candidate.Email" class="form-control" /> *@
+        <span asp-validation-for="Candidate.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Candidate.Mobile">Mobile</label>
+        <input type="text" id="CandidateMobile" name="Candidate.Mobile" class="form-control" />
+        <span asp-validation-for="Candidate.Mobile" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Candidate.CV">CV Type</label>
+        <select id="CandidateCV" name="CVS" class="form-control">
+            <option value="pdf">PDF</option>
+            <option value="word">Word</option>
+            <option value="excel">Excel</option>
+        </select>
+@*     </div>
+    <input type="hidden"
+           name="Candidate.CandidateDegrees" value="111"> *@
+        <input type="hidden" id="AllDegreesJson" name="AllDegrees" value="@Html.Raw(Json.Serialize(Model.AllDegrees))" />
+        <input type="hidden" asp-for="Candidate.CandidateDegrees" name="Candidate.CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.SelectedDegrees))" />
+    @*  <div>
+    <select id="departmentsDropdown" multiple="multiple">
+
+        <option value="" disabled>Select one or more categories</option>
+    </select>
+    <button id="submitCategories">Submit</button>
+    </div> *@
+        <div class="form-group">
+        <label for="degrees">Select Degrees:</label>
+        <select id="degrees" name="SelectedDegrees" class="form-control" multiple="multiple">
+            @foreach (var degree in Model.AllDegrees)
+            {
+                <option value="@degree.DegreeId" >
+                       @*   @(Model.SelectedDegrees.Contains(degree.DegreeId) ? "selected" : "")>  *@
+                    @degree.Name
+                </option>
+            }
+        </select>
+        </div>
+        </div>
+
+  
+    <button id="Add"  class="btn btn-primary">Add Candidate</button>
+</form>
+<div>
+    <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
+</div>
+
+
+    <script type="text/javascript">
+        // Fetch AllDegrees using AJAX on page load
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("GetAllDegrees")',  // URL to the GetAllDegrees action
+                method: 'GET',
+                success: function (data) {
+                    var dropdown = $('#degreesDropdown');
+                    dropdown.empty(); // Clear the dropdown
+                    $.each(data, function (index, degree) {
+                        dropdown.append('<option value="' + degree.id + '">' + degree.name + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('Failed to load degrees.');
+                }
+            });
+        });
+
+        // Handle form submission via AJAX
+        $('#candidateForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var candidateData = {
+                Candidate: {
+                    Name: $('#candidateName').val()
+                },
+                SelectedDegrees: $('#degreesDropdown').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("Add")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(candidateData),
+                success: function (response) {
+                    if (response.success) {
+                        $('#message').text(response.message);
+                    } else {
+                        $('#message').text(response.message);
+                    }
+                },
+                error: function () {
+                    $('#message').text('An error occurred while saving the candidate.');
+                }
+            });
+        });
+    </script>
+</body>
+
+@* <script>
+    $(document).ready(function () {
+        var degreeCounter = 0;
+        var degrees = [];
+
+        // Function to populate the dropdown
+        // function populateDegreesDropdown($dropdown) {
+        //     $.each(degrees, function (index, degree) {
+        //         $dropdown.append($('<option>', {
+        //             value: degree.Value,
+        //             text: degree.Text
+        //         }));
+        //     });
+        // }
+
+        // Close the dropdown when an option is selected
+        // $('#departmentsDropdown').on('change', function () {
+        //     $(this).blur();
+        // });
+
+        // Add degree button click event
+        $('#addDegreeButton').click(function () {
+            var degreeName = $('#newDegreeName').val().trim();
+            if (degreeName) {
+                $.ajax({
+                    url: '@Url.Action("Add", "Degrees")',
+                    type: 'POST',
+                    data: { degreeName: degreeName },
+                    success: function (response) {
+                        if (response.success) {
+                            degrees.push({ Value: response.degreeId, Text: response.degreeName });
+                            var newDropdown = $('<select name="Degrees[' + degreeCounter + ']" class="form-control degree-dropdown"><option value="">Select Degree</option></select>');
+                            populateDegreesDropdown(newDropdown);
+                            $('#degreesContainer').append(newDropdown);
+                            degreeCounter++;
+                            $('#newDegreeName').val(''); // Clear the input field
+                        } else {
+                            alert('Failed to add degree.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error while adding degree.');
+                    }
+                });
+            } else {
+                alert('Please enter a degree name.');
+            }
+        });
+
+        // Submit categories button click event
+        $('#submitCategories').click(function () {
+            var selectedNames = $('#departmentsDropdown').val();
+            if (!selectedNames || selectedNames.length === 0) {
+                alert("Please select at least one category.");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SubmitSelectedNames", "Home")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(selectedNames),
+                success: function (response) {
+                    alert("Categories submitted successfully!");
+                },
+                error: function (xhr, status, error) {
+                    alert("Error submitting categories.");
+                }
+            });
+        });
+
+        // Add button click event
+        $('#Add').click(function () {
+            var selectedNames = $('#departmentsDropdown').val();
+            if (!selectedNames || selectedNames.length === 0) {
+                alert("Please select at least one category.");
+                return;
+            }
+
+            var items = @Html.Raw(Json.Serialize(Model));
+
+            $.ajax({
+                url: '@Url.Action("Add", "Home")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(selectedNames),
+                success: function (response) {
+                    alert("Degrees transferred successfully.");
+                },
+                error: function (xhr, status, error) {
+                    alert("Error transferring degrees.");
+                }
+            });
+        });
+    });
+</script> *@

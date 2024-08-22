@@ -7,10 +7,20 @@ namespace WebApplication7.Models
         [Key]
         public int DegreeId { get; set; }
 
-        [Required]
+        
         public string Name { get; set; }
 
+        //[Required]
+        //public DateTime CreationTime { get; set; } = DateTime.Now;
+
+
         [Required]
-        public DateTime CreationTime { get; set; } = DateTime.Now;
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Date added")]
+        public DateTime? CreationTime { get; set; } = DateTime.Now;
+
+        ////[Display(Name = "Candidate ID")]
+        //public int CandidateId { get; set; }
     }
 }
