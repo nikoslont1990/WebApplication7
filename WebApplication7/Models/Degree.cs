@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication7.Models
 {
     public class Degree
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DegreeId { get; set; }
 
         

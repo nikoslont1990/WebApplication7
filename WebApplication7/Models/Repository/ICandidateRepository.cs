@@ -7,7 +7,7 @@ namespace WebApplication7.Models.Repository
         Task<IEnumerable<Candidate>> GetAll();
         Task<Candidate?> GetCandidateById(int candidateId);
 
-        Task<int> Add(Candidate candidate);
+        Task<int> AddCandidateAsync(Candidate candidate);
         Task<int> Update(Candidate candidate);
         Task<int> Delete(int id);
 

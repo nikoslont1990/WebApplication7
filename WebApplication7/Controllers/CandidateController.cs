@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.IO.Pipelines;
+using System.Reflection.Metadata.Ecma335;
 using WebApplication7.Models;
 using WebApplication7.Models.Repository;
 using WebApplication7.ViewModels;
@@ -68,6 +69,13 @@ namespace WebApplication7.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    List<Degree> alldegrees = new List<Degree>();
+                    foreach(var degree in candidate.CandidateDegrees)
+                            {
+                        degree.DegreeId = degree.DegreeId;
+                        degree.Name = degree.Name;
+                        alldegrees.Add(degree);
+                    }
                     Candidate cand = new()
                     {
                         FirstName = candidate.FirstName,
@@ -76,16 +84,11 @@ namespace WebApplication7.Controllers
                         Mobile = candidate.Mobile,
                         CV = candidate.CV,
                         CreationTime = candidate.CreationTime,
-                        CandidateDegrees = candidate.CandidateDegrees
-
-                        //CandidateDegrees = candidate.AllDegrees.Where(x => model.SelectedDegrees.Contains(x.DegreeId)).ToList()
+                         CandidateDegrees=alldegrees   
+                    
                     };
 
-
-
-
-
-                    await _candidateRepository.Add(cand);
+                   var candidates= await _candidateRepository.AddCandidateAsync(cand);
 
                     return RedirectToAction(nameof(Index));
                 }

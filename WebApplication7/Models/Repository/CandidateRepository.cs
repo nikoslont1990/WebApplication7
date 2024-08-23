@@ -14,22 +14,18 @@ namespace WebApplication7.Models.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<int> Add(Candidate candidate)
+        public async Task<int> AddCandidateAsync(Candidate candidate)
         {
 
             bool candidateWithSameNameExist = await _dbContext.Candidates.AnyAsync(c => c.FirstName == candidate.FirstName && c.LastName==candidate.LastName);
-
             if (candidateWithSameNameExist)
             {
                 throw new Exception("A Degree with the same name already exists");
             }
 
             _dbContext.Candidates.Add(candidate);
+            return await _dbContext.SaveChangesAsync(); 
 
-
-
-            //_dbContext.Candidates.AddAsync(candidate);
-            return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Candidate>> GetAll()
