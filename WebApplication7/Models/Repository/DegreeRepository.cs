@@ -66,6 +66,8 @@ namespace WebApplication7.Models.Repository
                 .Where(d => !_dbContext.Candidates.Any(c => c.CandidateDegrees.Any(y=>y.DegreeId == d.DegreeId)))
             .ToList();
 
+            var notUsed = _dbContext.Degrees.Where(x => x.CandidateId == null).ToList();
+
             _dbContext.Degrees.RemoveRange(unusedDegrees);
             return await _dbContext.SaveChangesAsync();
         }

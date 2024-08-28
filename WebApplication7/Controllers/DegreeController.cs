@@ -84,6 +84,14 @@ namespace WebApplication7.Controllers
         }
 
 
+        public async Task<IActionResult> DeleteUnused()
+        {
+            
+                var unuseddegrees = await _degreeRepository.DeleteUnusedDegrees();
+                return RedirectToAction(nameof(Index));
+            
+        }
+
         [HttpPost]
         public async Task<IActionResult> Edit(Degree degree)
         {
