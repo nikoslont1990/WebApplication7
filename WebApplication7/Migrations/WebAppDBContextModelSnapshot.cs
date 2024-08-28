@@ -56,12 +56,37 @@ namespace WebApplication7.Migrations
                     b.HasKey("CandidateId");
 
                     b.ToTable("Candidates");
+
+                    b.HasData(
+                        new
+                        {
+                            CandidateId = 1,
+                            CV = "PDF",
+                            CreationTime = new DateTime(2024, 8, 28, 18, 50, 4, 738, DateTimeKind.Local).AddTicks(7442),
+                            Email = "john.doe@example.com",
+                            FirstName = "John",
+                            LastName = "Doe",
+                            Mobile = "123-456-7890"
+                        },
+                        new
+                        {
+                            CandidateId = 2,
+                            CV = "Word",
+                            CreationTime = new DateTime(2024, 8, 28, 18, 50, 4, 738, DateTimeKind.Local).AddTicks(7447),
+                            Email = "jane.smith@example.com",
+                            FirstName = "Jane",
+                            LastName = "Smith",
+                            Mobile = "098-765-4321"
+                        });
                 });
 
             modelBuilder.Entity("WebApplication7.Models.Degree", b =>
                 {
                     b.Property<int>("DegreeId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DegreeId"));
 
                     b.Property<int?>("CandidateId")
                         .HasColumnType("int");
@@ -79,13 +104,38 @@ namespace WebApplication7.Migrations
                     b.HasIndex("CandidateId");
 
                     b.ToTable("Degrees");
+
+                    b.HasData(
+                        new
+                        {
+                            DegreeId = 1,
+                            CandidateId = 1,
+                            CreationTime = new DateTime(2024, 8, 28, 18, 50, 4, 738, DateTimeKind.Local).AddTicks(7586),
+                            Name = "Bachelor of Science"
+                        },
+                        new
+                        {
+                            DegreeId = 2,
+                            CandidateId = 1,
+                            CreationTime = new DateTime(2024, 8, 28, 18, 50, 4, 738, DateTimeKind.Local).AddTicks(7591),
+                            Name = "Master of Science"
+                        },
+                        new
+                        {
+                            DegreeId = 3,
+                            CandidateId = 2,
+                            CreationTime = new DateTime(2024, 8, 28, 18, 50, 4, 738, DateTimeKind.Local).AddTicks(7594),
+                            Name = "Associate Degree in Arts"
+                        });
                 });
 
             modelBuilder.Entity("WebApplication7.Models.Degree", b =>
                 {
-                    b.HasOne("WebApplication7.Models.Candidate", null)
+                    b.HasOne("WebApplication7.Models.Candidate", "Candidate")
                         .WithMany("CandidateDegrees")
                         .HasForeignKey("CandidateId");
+
+                    b.Navigation("Candidate");
                 });
 
             modelBuilder.Entity("WebApplication7.Models.Candidate", b =>

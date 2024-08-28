@@ -12,6 +12,7 @@ namespace WebApplication7
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+           
             builder.Services.AddDbContext<WebAppDBContext>(options => {
                 options.UseSqlServer(
                     builder.Configuration["ConnectionStrings:WebAppDBContextConnection"]);
@@ -38,7 +39,7 @@ namespace WebApplication7
 
                 var context = services.GetRequiredService<WebAppDBContext>();
                 //context.Database.EnsureCreated();
-                DbInitializer.Seed(context);
+               // DbInitializer.Seed(context);
             }
 
             app.UseHttpsRedirection();

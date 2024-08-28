@@ -1,4 +1,4 @@
-﻿@model CandidateViewModel
+﻿ @model CandidateViewModel
 
 <body>
 @{
@@ -38,33 +38,12 @@
             <option value="word">Word</option>
             <option value="excel">Excel</option>
         </select>
-@*     </div>
-    <input type="hidden"
-           name="Candidate.CandidateDegrees" value="111"> *@
-        <input type="hidden" id="AllDegreesJson" name="AllDegrees" value="@Html.Raw(Json.Serialize(Model.AllDegrees))" />
-        <input type="hidden" asp-for="Candidate.CandidateDegrees" name="Candidate.CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.SelectedDegrees))" />
-    @*  <div>
-    <select id="departmentsDropdown" multiple="multiple">
+    </div>
 
-        <option value="" disabled>Select one or more categories</option>
-    </select>
-    <button id="submitCategories">Submit</button>
-    </div> *@
-        <div class="form-group">
-        <label for="degrees">Select Degrees:</label>
-        <select id="degrees" name="SelectedDegrees" class="form-control" multiple="multiple">
-            @foreach (var degree in Model.AllDegrees)
-            {
-                <option value="@degree.DegreeId" >
-                       @*   @(Model.SelectedDegrees.Contains(degree.DegreeId) ? "selected" : "")>  *@
-                    @degree.Name
-                </option>
-            }
-        </select>
-        </div>
-        </div>
+        @* <input type="hidden" id="AllDegreesJson" name="AllDegrees" value="@Html.Raw(Json.Serialize(Model.AllDegrees))" /> *@
+       @*  <input type="hidden" asp-for="Candidate.CandidateDegrees" name="Candidate.CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.SelectedDegrees))" /> *@
 
-  
+   
     <button id="Add"  class="btn btn-primary">Add Candidate</button>
 </form>
 <div>
@@ -218,3 +197,4 @@
         });
     });
 </script> *@
+ 

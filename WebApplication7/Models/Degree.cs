@@ -6,7 +6,6 @@ namespace WebApplication7.Models
     public class Degree
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DegreeId { get; set; }
 
         
@@ -15,6 +14,9 @@ namespace WebApplication7.Models
         //[Required]
         //public DateTime CreationTime { get; set; } = DateTime.Now;
 
+        
+        public int? CandidateId { get; set; }
+
 
         [Required]
         [DataType(DataType.Date)]
@@ -22,6 +24,8 @@ namespace WebApplication7.Models
         [Display(Name = "Date added")]
         public DateTime? CreationTime { get; set; } = DateTime.Now;
 
+
+        public Candidate? Candidate { get; set; }
         ////[Display(Name = "Candidate ID")]
         //public int CandidateId { get; set; }
     }

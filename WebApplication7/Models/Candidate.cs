@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,7 +33,7 @@ using System.ComponentModel.DataAnnotations.Schema;
         //public Degree? Degree { get; set; }
 
         [Display(Name = "Degrees")]
-        public List<Degree> CandidateDegrees { get; set; }
+        public ICollection<Degree> CandidateDegrees { get; set; } = new List<Degree>();
         
         /*public IEnumerable<Degree> CandidateDegrees { get; set; } x;*/
 

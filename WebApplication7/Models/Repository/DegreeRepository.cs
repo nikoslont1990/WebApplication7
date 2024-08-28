@@ -39,12 +39,12 @@ namespace WebApplication7.Models.Repository
 
         public async Task<int> DeleteCategoryAsync(Degree degree)
         {
-            bool degreeWithSameNameExist = await _dbContext.Degrees.AnyAsync(c => c.DegreeId == degree.DegreeId);
-            //if (degreeWithSameNameExist)
-            //{
-            //    throw new Exception("A degree with the same name already exists");
+            bool degreeWithCandidate = await _dbContext.Candidates.AnyAsync(c => c.CandidateDegrees.Any(x=>x.DegreeId==degree.DegreeId));
+            if (degreeWithCandidate)
+            {
+                throw new Exception("Candidates exist for this degree if you want to delete the degree firt delete the associate candidate with this degree then the degree");
 
-            //}
+            }
 
             var deleteDegree = _dbContext.Degrees.FirstOrDefault(x => x.DegreeId == degree.DegreeId);
             if (deleteDegree != null)

@@ -1,134 +1,52 @@
 ﻿@model CandidateViewModel
 
-<body>
     @{
         ViewData["Title"] = "Add Candidate";
     }
 
     <h1>Add Candidate</h1>
 
-    <form id="candidateForm">
-        <div class="form-group">
-            <label for="Candidate.FirstName">FirstName</label>
-            <input type="text" id="candidateName" name="Candidate.FirstName" />
-            <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label for="Candidate.LastName">LastName</label>
-            <input type="text" id="candidateLastName" name="Candidate.LastName" class="form-control" />
-            <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label for="Candidate.Email">Email</label>
-            <input type="text" id="candidateEmail" name="Candidate.Email" class="form-control" />
-            <span asp-validation-for="Candidate.Email" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label for="Candidate.Mobile">Mobile</label>
-            <input type="text" id="CandidateMobile" name="Candidate.Mobile" class="form-control" />
-            <span asp-validation-for="Candidate.Mobile" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label for="Candidate.CV">CV Type</label>
-            <select id="CandidateCV" name="CVS" class="form-control">
+<form method="post" asp-controller="Candidate" asp-action="Add">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@*     <input type="hidden" asp-for="Candidate.CandidateId" /> *@
+    <div class="form-group">
+        <label asp-for="Candidate.FirstName" class="form-label"></label>
+        <input asp-for="Candidate.FirstName" class="form-control" />
+        <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Candidate.LastName" class="form-label"></label>
+        <input asp-for="Candidate.LastName" class="form-control" />
+        <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Candidate.Email" class="form-label"></label>
+        <input asp-for="Candidate.Email" class="form-control" />
+        <span asp-validation-for="Candidate.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Candidate.Mobile" class="form-label"></label>
+        <input asp-for="Candidate.Mobile" class="form-control" />
+        <span asp-validation-for="Candidate.Mobile" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Candidate.CV" class="form-label"></label>
+        <select asp-for="Candidate.CV"  class="form-control">
                 <option value="pdf">PDF</option>
                 <option value="word">Word</option>
                 <option value="excel">Excel</option>
-            </select>
-
-            <input type="hidden" id="AllDegreesJson" name="AllDegrees" value="@Html.Raw(Json.Serialize(Model.AllDegrees))" />
-            <input type="hidden" asp-for="Candidate.CandidateDegrees" name="Candidate.CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.SelectedDegrees))" />
-         
-            <div class="form-group">
-                <label for="degrees">Select Degrees:</label>
-                <select id="degrees" name="SelectedDegrees" class="form-control" multiple="multiple">
-                    @foreach (var degree in Model.AllDegrees)
-                    {
-                        <option value="@degree.DegreeId">
-                            @degree.Name
-                        </option>
-                    }
-                </select>
-            </div>
-        </div>
-
-
+        </select>
+    </div>
+            <label asp-for="SelectedDegrees" class="form-label">Degrees</label>
+             <select asp-for="SelectedDegrees" asp-items="Model.AllDegrees" multiple="multiple" class="form-control"></select>
+           <span asp-validation-for="Candidate.CandidateDegrees" class="text-danger"></span> 
+   </div>  
         <button type="submit" class="btn btn-primary">Add Candidate</button>
     </form>
     <div>
         <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
     </div>
 
-@section Scripts {
-<script>
-
-    var allDegrees = [];
-        // Fetch AllDegrees using AJAX on page load
-        $(document).ready(function () {
-            $.ajax({
-                url: '@Url.Action("GetAll", "Degree")',  // URL to the GetAllDegrees action
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    allDegrees = data;
-                    // var dropdown = $('#AllDegreesJson');
-                    /* dropdown.empty();  */// Clear the dropdown
-                    $.each(data, function (index, degree) {
-                        // dropdown.append('<option value="' + degree.id + '">' + degree.name + '</option>');
-                    });
-                },
-                error: function () {
-                    alert('Failed to load degrees.');
-                }
-            });
-        });
-
-        // Handle form submission via AJAX
-        $('#candidateForm').on('submit', function (e) {
-            //e.preventDefault();
-            var selectedValues=$('#degrees').val();
-            var degrees = selectedValues.map(function(value) {
-                    return {
-                     DegreeId: value,
-                     Name: "", // You can set it to an empty string or populate it as needed
-                     CreationTime: new Date().toISOString() // Set the current date/time as the creation time
-              };
-             });
-            var candidateData = {
-                
-                    //CandidateId:1,
-                    FirstName: $('#candidateName').val(),
-                    LastName:$('#candidateLastName').val(),
-                    Email:$('#candidateEmail').val(),
-                    Mobile:$('#CandidateMobile').val(),
-                    CV:$('#CandidateCV').val(),
-                    CandidateDegrees:degrees,
-                    //CreationTime: new Date().toISOString()
-                  
-                
-    
-            };
-
-                   var model=JSON.stringify(candidateData);
-
-            $.ajax({
-                url: '@Url.Action("Add","Candidate")',
-                method: 'POST',
-                contentType: 'application/json',
-                data: model,
-                success: function (response) {
-                    debugger;
-                    if (response.success) {
-                        $('#message').text(response.message);
-                    } else {
-                        $('#message').text(response.message);
-                    }
-                },
-                error: function () {
-                    $('#message').text('An error occurred while saving the candidate.');
-                }
-            });
-        });
-    </script>
- }
- </body>

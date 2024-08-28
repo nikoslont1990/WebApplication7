@@ -1,50 +1,42 @@
-﻿@model Candidate
+﻿@model CandidateEditViewModel
 
-<h2>Update Candidate @Model.FirstName</h2>
+<h2>Update Candidate @Model.Candidate.FirstName</h2>
 <hr />
 
 <form method="post" asp-controller="Candidate" asp-action="Edit">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="CandidateId" />
+    <input type="hidden" asp-for="Candidate.CandidateId" />
 
     <div class="mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+        <label asp-for="Candidate.FirstName" class="form-label"></label>
+        <input asp-for="Candidate.FirstName" class="form-control" />
+        <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="LastName" class="form-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
+        <label asp-for="Candidate.LastName" class="form-label"></label>
+        <input asp-for="Candidate.LastName" class="form-control" />
+        <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+        <label asp-for="Candidate.Email" class="form-label"></label>
+        <input asp-for="Candidate.Email" class="form-control" />
+        <span asp-validation-for="Candidate.Email" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="Mobile" class="form-label"></label>
-        <input asp-for="Mobile" class="form-control" />
-        <span asp-validation-for="Mobile" class="text-danger"></span>
+        <label asp-for="Candidate.Mobile" class="form-label"></label>
+        <input asp-for="Candidate.Mobile" class="form-control" />
+        <span asp-validation-for="Candidate.Mobile" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label asp-for="CV" class="form-label"></label>
-        <input asp-for="CV" class="form-control" />
-        <span asp-validation-for="CV" class="text-danger"></span>
+        <label asp-for="Candidate.CV" class="form-label"></label>
+        <input asp-for="Candidate.CV" class="form-control" />
+        <span asp-validation-for="Candidate.CV" class="text-danger"></span>
     </div>
-    
-    @for (int i = 0; i < Model.CandidateDegrees?.Count; i++)
-    {
-        
-        <input type="hidden" asp-for="CandidateDegrees[i].Name" />
-        <input type="hidden" asp-for="CandidateDegrees[i].CreationTime" />
-    }
-   @*  <input type="hidden" asp-for="CandidateDegrees" name="CandidateDegrees" value="@Html.Raw(Json.Serialize(Model.CandidateDegrees))" /> *@
-  @*   <div class="mb-3">
-        <label asp-for="CreationTime" class="form-label"></label>
-        <textarea asp-for="CreationTime" class="form-control" rows="5" cols="50" style="resize: none;"></textarea>
-        <span asp-validation-for="CreationTime" class="text-danger"></span>
-    </div> *@
+    <div>
+    <label asp-for="SelectedDegrees" class="form-label">Degrees</label>
+    <select asp-for="SelectedDegrees" asp-items="Model.AllDegrees" multiple="multiple" class="form-control"></select>
+    <span asp-validation-for="Candidate.CandidateDegrees" class="text-danger"></span>
+    </div>
     <input type="submit" value="Update candidate" class="btn btn-primary" />
 </form>
 <div>

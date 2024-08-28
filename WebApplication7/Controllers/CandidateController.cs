@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.IO.Pipelines;
 using System.Reflection.Metadata.Ecma335;
 using WebApplication7.Models;
@@ -49,46 +50,46 @@ namespace WebApplication7.Controllers
         #region Add
         public async Task<IActionResult> Add()
         {
-            
-            var degrees = await _degreeRepository.GetAll();
-            var viewModel = new CandidateViewModel
+            try
             {
-                AllDegrees = degrees.ToList() // Populate with all degrees from the database
-                
-            };
+                var degrees = await _degreeRepository.GetAll();
+                IEnumerable<SelectListItem> selectListItems = new SelectList(degrees, "DegreeId", "Name", null);
+                CandidateViewModel viewModel = new CandidateViewModel
+                {
+                    AllDegrees = selectListItems,
+                    ///*CandidateDegrees = degrees.ToList()/*// Populate with all degrees from the database
+                    
+                };
 
-        
-            return View(viewModel);
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = $"There was an error: {ex.Message}";
+            }
+            return View(new CandidateViewModel());
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody]Candidate candidate)
+        public async Task<IActionResult> Add(CandidateViewModel ncand)
          {
             try
             {
+
+
+                //var sk=JsonConvert.DeserializeObject()
                 if (ModelState.IsValid)
                 {
-                    List<Degree> alldegrees = new List<Degree>();
-                    foreach(var degree in candidate.CandidateDegrees)
-                            {
-                        degree.DegreeId = degree.DegreeId;
-                        degree.Name = degree.Name;
-                        alldegrees.Add(degree);
-                    }
-                    Candidate cand = new()
-                    {
-                        FirstName = candidate.FirstName,
-                        LastName = candidate.LastName,
-                        Email = candidate.Email,
-                        Mobile = candidate.Mobile,
-                        CV = candidate.CV,
-                        CreationTime = candidate.CreationTime,
-                         CandidateDegrees=alldegrees   
+                    List<SelectListItem> alldegrees = new List<SelectListItem>();
                     
-                    };
 
-                   var candidates= await _candidateRepository.AddCandidateAsync(cand);
+                    
+
+                    List<Degree> adddegrees = new List<Degree>();
+                    
+                    await _candidateRepository.AddCandidateAsync(ncand);
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -96,12 +97,12 @@ namespace WebApplication7.Controllers
  
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Adding the pie failed, please try again! Error: {ex.Message}");
+                ModelState.AddModelError("", $"Adding the candidate failed, please try again! Error: {ex.Message}");
             }
 
             var degrees= await _degreeRepository.GetAll();
             //model.AllDegrees= degrees.ToList();
-            return View(candidate);
+            return View(ncand);
             
         }
 
@@ -117,12 +118,21 @@ namespace WebApplication7.Controllers
             }
 
             var candidate = await _candidateRepository.GetCandidateById(id.Value);
-            return View(candidate);
+            
+            IEnumerable<SelectListItem> selectListItems = new SelectList(candidate.CandidateDegrees, "DegreeId", "Name", null);
+            CandidateEditViewModel editviewModel = new CandidateEditViewModel
+            {
+                Candidate = candidate,
+                AllDegrees = selectListItems,
+                ///*CandidateDegrees = degrees.ToList()/*// Populate with all degrees from the database
+
+            };
+            return View(editviewModel);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Candidate newcandididate)
+        public async Task<IActionResult> Edit(CandidateEditViewModel newcandididate)
         {
             try
             {
