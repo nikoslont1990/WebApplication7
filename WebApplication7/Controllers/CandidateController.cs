@@ -101,6 +101,7 @@ namespace WebApplication7.Controllers
             }
 
             var degrees= await _degreeRepository.GetAll();
+            ncand.AllDegrees = new SelectList(degrees, "DegreeId", "Name", null); 
             //model.AllDegrees= degrees.ToList();
             return View(ncand);
             
@@ -151,6 +152,19 @@ namespace WebApplication7.Controllers
                 ModelState.AddModelError("", $"Updating the category failed, please try again! Error: {ex.Message}");
             }
 
+
+            List<Degree> degreeList = new List<Degree>();
+            if (newcandididate.SelectedDegrees.Count > 0)
+            {
+                foreach (var item in newcandididate.SelectedDegrees.ToList())
+                {
+                    degreeList.Add(await _degreeRepository.GetDegreeByIdAsync(item));
+                }
+
+                newcandididate.AllDegrees = new SelectList(degreeList, "DegreeId", "Name", null);
+            }
+
+            
             return View(newcandididate);
         }
         #endregion
