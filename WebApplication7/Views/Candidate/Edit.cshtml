@@ -9,12 +9,12 @@
 
     <div class="mb-3">
         <label asp-for="Candidate.FirstName" class="form-label"></label>
-        <input asp-for="Candidate.FirstName" class="form-control" />
+        <input asp-for="Candidate.FirstName" class="form-control" readonly />
         <span asp-validation-for="Candidate.FirstName" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="Candidate.LastName" class="form-label"></label>
-        <input asp-for="Candidate.LastName" class="form-control" />
+        <input asp-for="Candidate.LastName" class="form-control" readonly />
         <span asp-validation-for="Candidate.LastName" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -32,13 +32,55 @@
         <input asp-for="Candidate.CV" class="form-control" />
         <span asp-validation-for="Candidate.CV" class="text-danger"></span>
     </div>
-    <div>
-    <label asp-for="SelectedDegrees" class="form-label">Degrees</label>
-    <select asp-for="SelectedDegrees" asp-items="Model.AllDegrees" multiple="multiple" class="form-control"></select>
-    <span asp-validation-for="Candidate.CandidateDegrees" class="text-danger"></span>
-    </div>
-    <input type="submit" value="Update candidate" class="btn btn-primary" />
+    <div class="form-group">
+        <label class="form-label">Select Degrees</label>
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                @foreach (var degree in Model.AllDegrees)
+                {
+                    var lst = Model.SelectedListDegrees.Select(x => int.Parse(x.Value)).ToList();
+                    <div class="form-check dropdown-item">
+                        <input type="checkbox" class="form-check-input degree-checkbox"
+                               value="@degree.Value" id="degree_@degree.Value"
+                        @(lst.Contains(int.Parse(degree.Value)) ? "checked" : "")
+                               onchange="updateSelectedDegrees()" />
+                        <label class="form-check-label" for="degree_@degree.Value">
+                        <label class="form-check-label" for="degree_@degree.Value">
+                            @degree.Text
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+        @* <input type="hidden" id="selectedDegrees" name="SelectedDegrees" /> *@
+        <input type="hidden" id="newSelectedDegrees" name="newSelectedDegrees" />
+        <input type="submit" value="Update candidate" class="btn btn-primary" />
 </form>
-<div>
     <a asp-controller="Candidate" asp-action="Index">Back to overview</a>
 </div>
+
+
+
+@section Scripts {
+    <script>
+        // Apply custom styles to the selected options
+
+
+
+        function updateSelectedDegrees() {
+            var selected = [];
+            document.querySelectorAll('.degree-checkbox:checked').forEach(function (checkbox) {
+                selected.push(checkbox.value);
+            });
+
+            // Store the selected values in the hidden input field
+         
+            //document.getElementById('selectedDegrees').value = selected.join(',');
+            document.getElementById('newSelectedDegrees').value = selected.join(',');
+        }
+    </script>
+}

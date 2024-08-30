@@ -23,14 +23,9 @@ using System.ComponentModel.DataAnnotations.Schema;
         public string Email { get; set; }
 
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be 10 digits")]
-        public string Mobile { get; set; }
+        [StringLength(10, MinimumLength = 0, ErrorMessage = "Mobile number must be 10 digits")]
+        public string? Mobile { get; set; }
 
-
-        //[Display(Name = "Degree ID")]
-        //public int DegreeID { get; set; }
-
-        //[Display(Name = "Degree")]
-        //public Degree? Degree { get; set; }
 
         [Display(Name = "Degrees")]
         public ICollection<Degree> CandidateDegrees { get; set; } = new List<Degree>();

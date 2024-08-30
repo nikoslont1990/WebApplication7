@@ -8,6 +8,8 @@ namespace WebApplication7.ViewModels
 
         public Candidate Candidate { get; set; }
         public List<int>? SelectedDegrees { get; set; } // To capture the selected degree IDs
+        public List<string>? newSelectedDegrees { get; set; } // To capture the selected degree IDs
         public IEnumerable<SelectListItem>? AllDegrees { get; set; } // To populate the dropdown
+        public IEnumerable<SelectListItem>? SelectedListDegrees { get; set; } // To populate the dropdown
     }
 }

@@ -22,7 +22,7 @@ namespace WebApplication7.Models.Repository
             bool candidateWithSameNameExist = await _dbContext.Candidates.AnyAsync(c => c.FirstName == ncand.Candidate.FirstName && c.LastName == ncand.Candidate.LastName);
             if (candidateWithSameNameExist)
             {
-                throw new Exception("A Degree with the same name already exists");
+                throw new Exception("A Candidate with the same name already exists");
             }
 
 
@@ -98,8 +98,9 @@ namespace WebApplication7.Models.Repository
 
         public async Task<int> UpdateCandidateAsync(CandidateEditViewModel candidate)
         {
-            bool existWithSameNameCandidate = _dbContext.Candidates.Any(x => x.FirstName == candidate.Candidate.FirstName && x.LastName == candidate.Candidate.LastName);
-            if (existWithSameNameCandidate)
+            var candidatealreadyExists=_dbContext.Candidates.Where(x => x.FirstName == candidate.Candidate.FirstName && x.LastName == candidate.Candidate.LastName && x.Mobile==candidate.Candidate.Mobile).ToList();
+           
+            if (candidatealreadyExists.Count>1)
             {
                 throw new Exception("A canidate with the same name already exists");
 
@@ -109,20 +110,19 @@ namespace WebApplication7.Models.Repository
             if (candidateToUpdate != null)
             {
                 List<Degree> updatelistDegree = new List<Degree>();
-                //foreach (var selection in candidate.SelectedDegrees.ToList())
-                //{
-                //    if (_dbContext.Degrees.Select(x => x.DegreeId).Contains(selection))
-                //    {
-                //        //var deg = _dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault();
-                //        updatelistDegree.Add(_dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault());
-                //    }
-                //}
+             
+              
                 candidateToUpdate.FirstName = candidate.Candidate.FirstName;
                 candidateToUpdate.LastName = candidate.Candidate.LastName;
-                candidateToUpdate.Mobile = candidate.Candidate.Mobile;
+                candidateToUpdate.Mobile = candidate.Candidate.Mobile==null?String.Empty: candidate.Candidate.Mobile;
                 candidateToUpdate.Email = candidate.Candidate.Email;
                 candidateToUpdate.CandidateId = candidate.Candidate.CandidateId;
-                candidateToUpdate.CandidateDegrees = CandidateDegrees(candidate.SelectedDegrees);
+                List<int> sd = new List<int>();
+                if (candidate.newSelectedDegrees.Any() && !candidate.newSelectedDegrees.Any(item => item == null))
+                    sd = candidate.newSelectedDegrees.Select(x => int.Parse(x)).ToList();
+                else
+                    sd = new List<int>();
+                candidateToUpdate.CandidateDegrees = CandidateDegrees(sd);
 
                 _dbContext.Candidates.Update(candidateToUpdate);
                 return await _dbContext.SaveChangesAsync();
@@ -136,13 +136,16 @@ namespace WebApplication7.Models.Repository
         private List<Degree> CandidateDegrees(List<int>? selectedDegree)
         {
             List<Degree> updatelistDegree = new List<Degree>();
-            foreach (var selection in selectedDegree)
+            if (selectedDegree.Count > 0)
             {
-                var lstDegree= _dbContext.Degrees.Select(x => x.DegreeId).ToList();
-                if (lstDegree.Contains(Convert.ToInt32(selection)))
+                foreach (var selection in selectedDegree)
                 {
-                    //var deg = _dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault();
-                    updatelistDegree.Add(_dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault());
+                    var lstDegree = _dbContext.Degrees.Select(x => x.DegreeId).ToList();
+                    if (lstDegree.Contains(Convert.ToInt32(selection)))
+                    {
+                        //var deg = _dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault();
+                        updatelistDegree.Add(_dbContext.Degrees.Where(x => x.DegreeId == selection).FirstOrDefault());
+                    }
                 }
             }
 

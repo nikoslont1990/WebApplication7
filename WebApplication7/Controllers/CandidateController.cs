@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Reflection.Metadata.Ecma335;
 using WebApplication7.Models;
@@ -121,10 +123,14 @@ namespace WebApplication7.Controllers
             var candidate = await _candidateRepository.GetCandidateById(id.Value);
             
             IEnumerable<SelectListItem> selectListItems = new SelectList(candidate.CandidateDegrees, "DegreeId", "Name", null);
+           
+            var alldegrees =await  _degreeRepository.GetAll();
+            IEnumerable<SelectListItem> allListItems = new SelectList(alldegrees, "DegreeId", "Name", null);
             CandidateEditViewModel editviewModel = new CandidateEditViewModel
             {
                 Candidate = candidate,
-                AllDegrees = selectListItems,
+                AllDegrees = allListItems,
+                SelectedListDegrees= selectListItems,
                 ///*CandidateDegrees = degrees.ToList()/*// Populate with all degrees from the database
 
             };
@@ -137,8 +143,18 @@ namespace WebApplication7.Controllers
         {
             try
             {
+                ModelState.Remove("Candidate.LastName");
+                ModelState.Remove("Candidate.FirstName");
                 if (ModelState.IsValid)
                 {
+                    if (newcandididate.newSelectedDegrees.Count>0)
+                    {
+                        if (!(!newcandididate.newSelectedDegrees.Any()) && !newcandididate.newSelectedDegrees.Any(item => item == null))
+                        {
+                            var k = String.Join(',', newcandididate.newSelectedDegrees).Split(',').ToList();
+                            newcandididate.newSelectedDegrees = k;
+                        }
+                    }
                     await _candidateRepository.UpdateCandidateAsync(newcandididate);
                     return RedirectToAction(nameof(Index));
                 }
