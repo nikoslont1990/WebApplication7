@@ -37,7 +37,7 @@ namespace WebApplication7.Models.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<int> DeleteCategoryAsync(Degree degree)
+        public async Task<int> DeleteDegreeAsync(Degree degree)
         {
             bool degreeWithCandidate = await _dbContext.Candidates.AnyAsync(c => c.CandidateDegrees.Any(x=>x.DegreeId==degree.DegreeId));
             if (degreeWithCandidate)
@@ -79,9 +79,15 @@ namespace WebApplication7.Models.Repository
 
         public  async Task<Degree?> GetDegreeByIdAsync(int DegreeId)
         {
-            return await _dbContext.Degrees.AsNoTracking().FirstOrDefaultAsync(c => c.DegreeId== DegreeId);
-
-
+            var degree=await _dbContext.Degrees.AsNoTracking().FirstOrDefaultAsync(c => c.DegreeId== DegreeId);
+            if(degree.CandidateId==null)
+            {
+                return degree;
+            }
+            else
+            {
+                throw new Exception("The degree cannot be deleted because it is related with a candidate");
+            }
         }
 
 

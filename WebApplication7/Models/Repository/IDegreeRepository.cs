@@ -8,7 +8,7 @@
 
         Task<int> Add(Degree degree);
         //Task<int> Update(Degree degree);
-        Task<int> DeleteCategoryAsync(Degree degree);
+        Task<int> DeleteDegreeAsync(Degree degree);
 
         Task<int> DeleteUnusedDegrees(); 
         

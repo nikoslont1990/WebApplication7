@@ -42,14 +42,23 @@ namespace WebApplication7.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-
-            if (id == null)
+            Degree? degree;
+            try
             {
-                return NotFound();
+                
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                 degree = await _degreeRepository.GetDegreeByIdAsync(id);
+                return View(degree);
             }
-
-            var candidate = await _degreeRepository.GetDegreeByIdAsync(id);
-            return View(candidate);
+            catch(Exception ex)
+            {
+                ViewData["ErrorMessage"] = $"Deleting the degree failed, please try again! Error: {ex.Message}";
+            }
+            
+            return View();
         }
 
         [HttpPost]
@@ -58,7 +67,8 @@ namespace WebApplication7.Controllers
             try
             {
                 
-                    await _degreeRepository.DeleteCategoryAsync(degree);
+                    await _degreeRepository.DeleteDegreeAsync(degree);
+
                     return RedirectToAction(nameof(Index));
               
             }
